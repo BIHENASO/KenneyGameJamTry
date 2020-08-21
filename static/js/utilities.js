@@ -45,3 +45,69 @@ function anim(duration, maxCount, count, animfunc, callback){
     }, duration / maxCount);
   }
 }
+
+function contain(sprite, container){
+
+	var collision = undefined;
+
+  	if (sprite.x - sprite.width / 2 < container.x) {
+		sprite.x = container.x + sprite.width * 0.5;
+		collision = "left";
+  	}
+
+  	if (sprite.y - sprite.height / 2  < container.y) {
+		sprite.y = container.y + sprite.height * 0.5;
+		collision = "top";
+  	}
+
+  	if (sprite.x + sprite.width / 2 > container.width + container.x) {
+		sprite.x = (container.width + container.x) - sprite.width * 0.5;
+		collision = "right";
+  	}
+
+  	if (sprite.y + sprite.height / 2 > container.height + container.y) {
+		sprite.y = (container.height + container.y) - sprite.height * 0.5;
+		collision = "bottom";
+  	}
+
+  	return collision;
+}
+
+function hitTestRectangle(r1, r2) {
+
+	var hit, combinedHalfWidths, combinedHalfHeights, vx, vy;
+
+	hit = false;
+
+  	r1.centerX = r1.x;
+  	r1.centerY = r1.y;
+  	r2.centerX = r2.x;
+  	r2.centerY = r2.y;
+
+  	r1.halfWidth = r1.width / 2;
+  	r1.halfHeight = r1.height / 2;
+  	r2.halfWidth = r2.width / 2;
+  	r2.halfHeight = r2.height / 2;
+
+  	vx = r1.centerX - r2.centerX;
+  	vy = r1.centerY - r2.centerY;
+
+  	combinedHalfWidths = r1.halfWidth + r2.halfWidth;
+  	combinedHalfHeights = r1.halfHeight + r2.halfHeight;
+
+  	if (Math.abs(vx) < combinedHalfWidths){
+
+		if (Math.abs(vy) < combinedHalfHeights){
+
+	  		hit = true;
+		}else{
+
+	  		hit = false;
+		}
+  	}else{
+
+		hit = false;
+  	}
+
+  	return hit;
+}

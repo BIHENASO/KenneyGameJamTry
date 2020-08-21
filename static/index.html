@@ -1,0 +1,21 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>KenneyGameJam</title>
+  <style>* {padding: 0; margin: 0}</style>
+</head>
+  <script src="./assets/libs/pixi.min.js"></script>
+<body>
+  <script type="text/javascript">
+    var type = "WebGL"
+    if(!PIXI.utils.isWebGLSupported()){
+      type = "canvas"
+    }
+
+    PIXI.utils.sayHello(type)
+    window.location.assign("./html/game.html")
+  </script>
+  <script type="text/javascript" src="./js/index.js"></script>
+</body>
+</html>

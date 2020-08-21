@@ -1,0 +1,34 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>KenneyGameJam</title>
+  <style>* {padding: 0; margin: 0}</style>
+</head>
+  <script src="../assets/libs/pixi.min.js"></script>
+<body>
+  <script type="text/javascript">
+    //check webGL support
+    var type = "WebGL"
+    if(!PIXI.utils.isWebGLSupported()){
+      type = "canvas"
+    }
+
+    PIXI.utils.sayHello(type)
+    //create aliases
+    var Application = PIXI.Application,
+        loader = PIXI.loader,
+        resources = PIXI.loader.resources,
+        TextureCache = PIXI.utils.TextureCache,
+        Sprite = PIXI.Sprite,
+        Container = PIXI.Container,
+        Text = PIXI.Text,
+        Animation = PIXI.extras.AnimatedSprite,
+        Graphics = PIXI.Graphics;
+  </script>
+  <script type="text/javascript" src="../js/utilities.js"></script>
+  <script type="text/javascript" src="../js/classes.js"></script>
+  <script type="text/javascript" src="../js/game.js"></script>
+  <script type="text/javascript" src="../js/eventhandlers.js"></script>
+</body>
+</html>

@@ -140,8 +140,11 @@ function Enemy(texture, type = 1){
       if(hitTestRectangle(this, bullet)){
         bullet.status = "hit";
         this.heal -= bullet.damage;
-        this.alpha = 0.5
-        animUtil(500, 5, function(){this.alpha += 0.1;}.bind(this), function(){this.alpha = 1;}.bind(this));
+        this.alpha = 0.5;
+        animUtil(500, 5, function(){this.x = this.x + (step / 5 * Math.cos(bullet.rotation - Math.PI/2));
+          this.y = this.y + (step / 5 * Math.sin(bullet.rotation - Math.PI/2));
+          this.alpha += 0.1;}.bind(this),
+          function(){this.alpha = 1; this.moveAngle = bullet.rotation - Math.PI;}.bind(this));
       }
     }.bind(this));
   }
@@ -161,6 +164,7 @@ function Enemy(texture, type = 1){
     sprite.width = 3 * step;
     sprite.height = 3 * step;
     sprite.anchor.set(0.5);
+	sprite.alpha = 0;
     camera.addChild(sprite);
     return sprite;
   }

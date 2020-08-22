@@ -25,7 +25,9 @@ var microcoloredsheet,
     microcitysheet,
     microindoorsheet,
     micromonochromesheet,
+    gameContainer,
     player,
+    timer,
     enemyList = [],
     treeList = [],
     container = {"x" : 0, "y" : 0, "width" : x, "height" : y},
@@ -131,7 +133,7 @@ function spawnEnemy(className) {
 	enemy.height = step;
 	enemy.id = window[className+"NextId"]++;
 	enemyList.push(enemy);
-	app.stage.addChild(enemy);
+	gameContainer.addChild(enemy);
 	return enemy;
 	/*var enemy = new window[className](Math.floor(Math.random()*x),Math.floor(Math.random()*y));
 	enemyList.push(enemy);
@@ -150,7 +152,7 @@ function spawnBonus(className) {
 	bonus.width = step;
 	bonus.height = step;
 	treeList.push(bonus);
-	app.stage.addChild(bonus);
+	gameContainer.addChild(bonus);
 	return bonus;
 }
 function spawn(n=5) {
@@ -188,12 +190,50 @@ function setup(){
   microindoorsheet = resources[spritePath + "microindoorsheet.json"].textures;
   micromonochromesheet = resources[spritePath + "micromonochromesheet.json"].textures;
 
+  gameContainer = new Container();
+  gameContainer.x = 0;
+  gameContainer.y = 0;
+  gameContainer.width = x;
+  gameContainer.height = y;
+  app.stage.addChild(gameContainer);
+
   player = new Player(microcharactersheet["tile378.png"]);
   player.x = x * 0.5;
   player.y = y * 0.5;
   player.width = step;
   player.height = step;
-  app.stage.addChild(player);
+  gameContainer.addChild(player);
+
+  //create load page container
+  var playerHealContainer = new Container();
+  app.stage.addChild(playerHealContainer);
+
+  //add progress bar(back bar)
+  var bhg = new PIXI.Graphics();
+  bhg.beginFill(0xc7fd09, 0.2);
+  bhg.lineStyle(4, 0x9f9f9f, 1);
+  bhg.drawRoundedRect(0, 0, 5 * step, step, 5);
+  bhg.endFill();
+  playerHealContainer.addChild(bhg);
+
+  //add progress bar(front bar)
+  var fhg = new PIXI.Graphics();
+  fhg.beginFill(0xc7fd09, 0.4);
+  fhg.drawRoundedRect(0, 0, 5 * step, step, step * 0.2);
+  fhg.endFill();
+  playerHealContainer.addChild(fhg);
+
+  player.healBar = fhg;
+  player.healBarStep = fhg.width * 0.01;
+
+  timer = new PixiStopWatch(x - 3 * step, 2 * step, 2 * step, {"animStyle" : "fluid", "colorAnim" : false, "backColor" : 0x9f9f9f, "frontColor" :  0xc7fd09});
+  timer.drawBack();
+  timer.start(600);
+  timer.alpha = 0.5;
+  playerHealContainer.addChild(timer);
+
+  playerHealContainer.x = step * 0.5;
+  playerHealContainer.y = step * 0.5;
 
   /*var enemy = new Enemy(microcharactersheet["tile055.png"]);
   enemy.x = x * 0.5;
@@ -235,6 +275,7 @@ function setup(){
   app.ticker.add(function(){
     player.move();
     player.dealTreeCrash();
+    player.dealHealBar();
     enemyList = enemyList.filter(function(enemy){
       var ret = true;
       enemy.move();

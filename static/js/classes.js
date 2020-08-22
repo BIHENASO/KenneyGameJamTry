@@ -19,11 +19,17 @@ function Player(texture){
     treeList.forEach(function(tree){
       if(hitTestRectangle(this, tree)){
         console.log("player hit tree");
-        this.heal += tree.heal * 0.01;
+        this.heal += tree.heal * 0.1;
         if(this.heal > 100) this.heal = 100;
         tree.heal = 0;
       }
     }.bind(this));
+  }
+  this.dealHealBar = function dealHealBar(){
+    if(this.healBar != undefined && this.healBarStep != undefined){
+      if(this.heal > 100) this.heal = 100;
+      this.healBar.width = this.heal * this.healBarStep;
+    }
   }
 }
 
@@ -43,11 +49,11 @@ function Enemy(texture, type = 1){
   this.moveAngle = (this.type-1) * Math.PI * 0.5;
   this.moveVelocity = step * 0.02;
   this.moveFactor = 1;
-  this.range = 200;
+  this.range = 5 * step;
   this.move = function move(){
     if(contain(this, container) || this.range <= 0){
       this.moveAngle += Math.PI;
-      this.range = 200;
+      this.range = 5 * step;
     }
     this.x = this.x + (this.moveFactor * this.moveVelocity * Math.cos(this.moveAngle - Math.PI/2))
     this.y = this.y + (this.moveFactor * this.moveVelocity * Math.sin(this.moveAngle - Math.PI/2));
@@ -57,9 +63,9 @@ function Enemy(texture, type = 1){
     enemyList.forEach(function(enemy){
       if(hitTestRectangle(this, enemy) && this.id != enemy.id){
         this.moveAngle += Math.PI;
-        this.range = 200;
+        this.range = 5 * step;
         enemy.moveAngle += Math.PI;
-        enemy.range = 200;
+        enemy.range = 5 * step;
       }
     }.bind(this));
   }
@@ -69,14 +75,14 @@ function Enemy(texture, type = 1){
         console.log("hit tree");
         tree.heal -= this.heal * 0.1;
         this.moveAngle += Math.PI;
-        this.range = 200;
+        this.range = 5 * step;
       }
     }.bind(this));
   }
   this.death = function death(){
     this.x = -50 * x;
     this.y = -50 * y;
-    app.stage.removeChild(this);
+    gameContainer.removeChild(this);
   }
 
 }
@@ -97,7 +103,7 @@ function Tree(texture, type = 1){
   this.death = function death(){
     this.x = -50 * x;
     this.y = -50 * y;
-    app.stage.removeChild(this);
+    gameContainer.removeChild(this);
   }
 }
 

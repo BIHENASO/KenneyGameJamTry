@@ -282,7 +282,7 @@ function setup(){
   cursor.anchor.set(0.5);
   cursor.interactive = true;
   cursor.buttonMode = true;
-  cursor.on('pointerdown', function(){console.log("Fire in the hole");if(!player.trigger){player.fireUtil(calculateSlope(player, cursor))}});
+  cursor.on('pointerdown', function(){console.log("Fire in the hole");if(!player.trigger){player.fireUtil(calculateSlope(player, cursor)+Math.PI*1.5)}});
   playerHealContainer.addChild(cursor);
 
   /*var enemy = new Enemy(microcharactersheet["tile055.png"]);

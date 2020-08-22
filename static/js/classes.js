@@ -9,12 +9,13 @@ function Player(texture){
   this.fireID = 0;
   this.directionList = [0, Math.PI * 0.5, Math.PI, 1.5 * Math.PI];
   this.intervalID = 0;
-  this.deathStatus = false;
   this.move = function move(){
     if(!contain(this, container)){
       var angle = this.directionList[this.moveDirection];
       this.x = this.x + (this.moveFactor * this.moveVelocity * this.moveStatus * Math.cos(angle - Math.PI/2))
       this.y = this.y + (this.moveFactor * this.moveVelocity * this.moveStatus * Math.sin(angle - Math.PI/2));
+      sickP.x = this.x;
+      sickP.y = this.y;
     }
   }
   this.dealTreeCrash = function dealTreeCrash(){
@@ -36,14 +37,16 @@ function Player(texture){
   this.death = function death(){
     this.x = -50 * x;
     this.y = -50 * y;
-    this.deathStatus = true;
     clearInterval(this.intervalID);
     gameContainer.removeChild(this);
+    gameContainer.removeChild(sickP);
   }
   this.intervalFunc = function intervalFunc(){
     this.intervalID = setInterval(function(){
       if(this.heal > 0){
         this.heal -= 5;
+        this.alpha = 0;
+        animUtil(1000, 5, function(){sickP.alpha += 0.2}.bind(this), function(){this.alpha = 1; sickP.alpha = 0}.bind(this));
       }
       if(this.heal <= 0){
         animUtil(1000, 5, function(){this.alpha -= 0.2}.bind(this), function(){this.death();}.bind(this));

@@ -31,6 +31,7 @@ var microcoloredsheet,
     micromonochromesheet,
     gameContainer,
     player,
+    sickP,
     timer,
     bg,
     enemyList = [],
@@ -218,6 +219,15 @@ function setup(){
   player.width = step;
   player.height = step;
   gameContainer.addChild(player);
+
+  sickP = new Sprite(microcharactersheet["tile379.png"]);
+  sickP.x = x * 0.5;
+  sickP.y = y * 0.5;
+  sickP.width = step;
+  sickP.height = step;
+  sickP.alpha = 0;
+  sickP.anchor.set(0.5);
+  gameContainer.addChild(sickP);
 
   //create load page container
   var playerHealContainer = new Container();

@@ -38,7 +38,15 @@ var microcoloredsheet,
     enemyList = [],
     treeList = [],
     container = {"x" : 0, "y" : 0, "width" : x, "height" : y},
-    step = calculateStep();
+    enemyTypesDict =
+      {
+        1:{"h":1, "v" : 3, "d" : 1},
+        2:{"h":3, "v" : 1, "d" : 3}
+      },
+    step = calculateStep(),
+    vFactor = step * 0.01,
+    hFactor = 50,
+    dFactor = 10;
 
 
 //create application

@@ -1,9 +1,10 @@
 function Player(texture){
   Sprite.call(this, texture); //constructor call PIXI.Sprite class
   this.anchor.set(0.5);
-  this.heal = 100;
+  this.heal = hFactor * 2;
   this.moveDirection = 0;
-  this.moveVelocity = step * 0.02;
+  this.moveVelocity = vFactor * 2;
+  this.damage = dFactor * 5;
   this.moveStatus = 0;
   this.moveFactor = 1;
   this.fireID = 0;
@@ -66,11 +67,11 @@ Object.defineProperty(Player.prototype, 'constructor', {
 function Enemy(texture, type = 1){
   Sprite.call(this, texture); //constructor call PIXI.Sprite class
   this.anchor.set(0.5);
-  this.heal = 100;
   this.type = type;
-  this.moveAngle = (this.type-1) * Math.PI * 0.5;
-  this.moveVelocity = step * 0.02;
-  this.moveFactor = 1;
+  this.heal = hFactor * enemyTypesDict[this.type]["h"];
+  this.moveAngle = degrees_to_radians(randomInt(0, 360));
+  this.moveVelocity = vFactor * enemyTypesDict[this.type]["v"];
+  this.damage = dFactor * enemyTypesDict[this.type]["d"];
   this.range = 5 * step;
   this.move = function move(){
     if(contain(this, container) || this.range <= 0){
@@ -81,11 +82,11 @@ function Enemy(texture, type = 1){
       this.moveAngle = calculateSlope(this.radar, player) - Math.PI/2;
       this.range = 5 * step;
     }
-    this.x = this.x + (this.moveFactor * this.moveVelocity * Math.cos(this.moveAngle - Math.PI/2))
-    this.y = this.y + (this.moveFactor * this.moveVelocity * Math.sin(this.moveAngle - Math.PI/2));
+    this.x = this.x + (this.moveVelocity * Math.cos(this.moveAngle - Math.PI/2))
+    this.y = this.y + (this.moveVelocity * Math.sin(this.moveAngle - Math.PI/2));
     this.radar.x = this.x;
     this.radar.y = this.y;
-    this.range -= this.moveFactor * this.moveVelocity;
+    this.range -= this.moveVelocity;
   }
   this.dealTeamCrash = function dealTeamCrash(){
     enemyList.forEach(function(enemy){
@@ -101,7 +102,7 @@ function Enemy(texture, type = 1){
     treeList.forEach(function(tree){
       if(hitTestRectangle(this, tree)){
         console.log("hit tree");
-        tree.heal -= this.heal * 0.1;
+        tree.heal -= this.damage;
         this.moveAngle += Math.PI;
         this.range = 5 * step;
       }
@@ -141,7 +142,7 @@ function Tree(texture, type = 1){
   Sprite.call(this, texture); //constructor call PIXI.Sprite class
   this.anchor.set(0.5);
   this.type = type;
-  this.heal = type * 100;
+  this.heal = this.type * hFactor * 2;
   this.death = function death(){
     this.x = -50 * x;
     this.y = -50 * y;

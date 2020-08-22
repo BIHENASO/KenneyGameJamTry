@@ -4,6 +4,18 @@ var x = window.innerWidth,
     ratio = x / y,
     spritePath = "../assets/img/";
 
+//enemy and bonus spawn declarations
+var startingTime = Date.now();
+var enemyTypeList = ["Enemy"]; //["Enemy1", "Enemy2", "Enemy3"];
+var bonusTypeList = ["Tree"]; //["Bonus1", "Bonus2"];
+var TreeTypes = [1];//["Id1", "Id2", "Id3"];
+var EnemyTypes = [1,2];
+var TreeSheets = ["microcitysheet"];
+var TreeTextures = ["tile517.png"];
+var EnemySheets = ["microcharactersheet","microcharactersheet"];
+var EnemyTextures = ["tile055.png","tile055.png"];
+var EnemyNextId = 0;
+
 //global spritesheet declarations
 var microcoloredsheet,
     microbasic0sheet,
@@ -104,6 +116,59 @@ function loadPageHandler(){
   }, 1000);
 }
 
+//functions for randomly spawning enemies and bonuses
+function spawnEnemy(className) {
+	var enemy;
+	if (window[className+"Types"]) {
+		var typeInt = randomInt(0,window[className+"Types"].length-1);
+		enemy = new window[className](window[window[className+"Sheets"][typeInt]][window[className+"Textures"][typeInt]], window[className+"Types"][typeInt]);
+	} else {
+		enemy = new window[className](window[window[className+"Sheets"][0]][window[className+"Textures"][0]]);
+	}
+	enemy.x = randomInt(step * 0.5, x - step * 0.5);
+	enemy.y = randomInt(step * 0.5, y - step * 0.5);
+	enemy.width = step;
+	enemy.height = step;
+	enemy.id = window[className+"NextId"]++;
+	enemyList.push(enemy);
+	app.stage.addChild(enemy);
+	return enemy;
+	/*var enemy = new window[className](Math.floor(Math.random()*x),Math.floor(Math.random()*y));
+	enemyList.push(enemy);
+	return enemy;*/
+}
+function spawnBonus(className) {
+	var bonus;
+	if (window[className+"Types"]) {
+		var typeInt = randomInt(0,window[className+"Types"].length-1);
+		bonus = new window[className](window[window[className+"Sheets"][typeInt]][window[className+"Textures"][typeInt]], window[className+"Types"][typeInt]);
+	} else {
+		bonus = new window[className](window[window[className+"Sheets"][0]][window[className+"Textures"][0]]);
+	}
+	bonus.x = randomInt(step * 0.5, x - step * 0.5);
+	bonus.y = randomInt(step * 0.5, y - step * 0.5);
+	bonus.width = step;
+	bonus.height = step;
+	treeList.push(bonus);
+	app.stage.addChild(bonus);
+	return bonus;
+}
+function spawn(n=5) {
+	var time = Math.floor((Date.now() - startingTime)/10000);
+	var difficulty = time / (time+1);
+	var spawns = [];
+	for (var i = 0; i < n; i++) {
+		spawns.push(Math.random());
+	}
+	for (var i = 0; i < n; i++) {
+		if (spawns[i] < difficulty) {
+			spawns[i] = spawnEnemy(enemyTypeList[Math.floor(Math.random()*enemyTypeList.length)]);
+		} else {
+			spawns[i] = spawnBonus(bonusTypeList[Math.floor(Math.random()*bonusTypeList.length)]);
+		}
+	}
+}
+
 function setup(){
   //define global variable spritesheet
   //it is reference to reach texture from cache
@@ -194,5 +259,6 @@ function setup(){
 
   document.addEventListener('keydown', onKeyDown);
   document.addEventListener('keyup', onKeyUp);
-
+  
+  setInterval(spawn,5000);
 }

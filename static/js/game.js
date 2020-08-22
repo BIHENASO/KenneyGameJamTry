@@ -8,12 +8,12 @@ var x = window.innerWidth,
 var startingTime = Date.now();
 var enemyTypeList = ["Enemy"]; //["Enemy1", "Enemy2", "Enemy3"];
 var bonusTypeList = ["Tree"]; //["Bonus1", "Bonus2"];
-var TreeTypes = [1];//["Id1", "Id2", "Id3"];
+var TreeTypes = [1,2,3];//["Id1", "Id2", "Id3"];
 var EnemyTypes = [1,2];
-var TreeSheets = ["microcitysheet"];
-var TreeTextures = ["tile517.png"];
+var TreeSheets = ["microcitysheet", "microcitysheet", "microcitysheet"];
+var TreeTextures = ["tile512.png", "tile516.png", "tile517.png"];
 var EnemySheets = ["microcharactersheet","microcharactersheet"];
-var EnemyTextures = ["tile055.png","tile055.png"];
+var EnemyTextures = ["tile055.png","tile109.png"];
 var EnemyNextId = 0;
 
 //global spritesheet declarations

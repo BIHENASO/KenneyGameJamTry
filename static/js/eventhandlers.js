@@ -17,6 +17,11 @@ function onKeyDown(event){
     player.moveStatus = 1;
     player.moveDirection = 1;
   }
+  if(event.keyCode == 13){
+    if(!player.trigger){
+      player.fireUtil();
+    }
+  }
 }
 
 function onKeyUp(event){

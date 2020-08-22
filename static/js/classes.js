@@ -10,6 +10,7 @@ function Player(texture){
   this.fireID = 0;
   this.directionList = [0, Math.PI * 0.5, Math.PI, 1.5 * Math.PI];
   this.intervalID = 0;
+  this.trigger = false;
   this.move = function move(){
     if(!contain(this, container)){
       var angle = this.directionList[this.moveDirection];
@@ -41,6 +42,24 @@ function Player(texture){
     clearInterval(this.intervalID);
     gameContainer.removeChild(this);
     gameContainer.removeChild(sickP);
+  }
+  this.fire = function fire(angle){
+    var fire = new Sprite(microbasic1sheet["tile1353.png"]);
+    fire.x = this.x + (step * 0.5 * Math.cos(angle));
+    fire.y = this.y + (step * 0.5 * Math.sin(angle));
+    fire.width = 1.25 * step;
+    fire.height = 1.25 * step;
+    fire.anchor.set(0.5);
+    fire.damage = this.damage;
+    fire.rotation = angle;
+    console.log(fire.rotation);
+    gameContainer.addChild(fire);
+    bulletList.push(fire);
+  }
+  this.fireUtil = function fireUtil(angle){
+    this.alpha = 0.5;
+    this.trigger = true;
+    animUtil(500, 5, function(){sickP.alpha += 0.1}.bind(this), function(){this.alpha = 1; sickP.alpha = 0; this.fire(angle); this.trigger = false;}.bind(this));
   }
   this.intervalFunc = function intervalFunc(){
     this.intervalID = setInterval(function(){
@@ -105,6 +124,16 @@ function Enemy(texture, type = 1){
         tree.heal -= this.damage;
         this.moveAngle += Math.PI;
         this.range = 5 * step;
+      }
+    }.bind(this));
+  }
+  this.dealBulletCrash = function dealBulletCrash(){
+    bulletList.forEach(function(bullet){
+      if(hitTestRectangle(this, bullet)){
+        bullet.status = "hit";
+        this.heal -= bullet.damage;
+        this.alpha = 0.5
+        animUtil(500, 5, function(){this.alpha += 0.1;}.bind(this), function(){this.alpha = 1;}.bind(this));
       }
     }.bind(this));
   }

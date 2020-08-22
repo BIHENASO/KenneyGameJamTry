@@ -35,6 +35,7 @@ var microcoloredsheet,
     timer,
     bg,
     radarTexture,
+    bulletList = [],
     enemyList = [],
     treeList = [],
     container = {"x" : 0, "y" : 0, "width" : x, "height" : y},
@@ -273,6 +274,17 @@ function setup(){
   playerHealContainer.x = step * 0.5;
   playerHealContainer.y = step * 0.5;
 
+  cursor = new Sprite(microcavesheet["tile363.png"]);
+  cursor.x = x * 0.5;
+  cursor.y = y * 0.5;
+  cursor.width = 1.5 * step;
+  cursor.height = 1.5 * step;
+  cursor.anchor.set(0.5);
+  cursor.interactive = true;
+  cursor.buttonMode = true;
+  cursor.on('pointerdown', function(){console.log("Fire in the hole");if(!player.trigger){player.fireUtil(calculateSlope(player, cursor))}});
+  playerHealContainer.addChild(cursor);
+
   /*var enemy = new Enemy(microcharactersheet["tile055.png"]);
   enemy.x = x * 0.5;
   enemy.y = y * 0.2;
@@ -319,6 +331,7 @@ function setup(){
       enemy.move();
       enemy.dealTeamCrash();
       enemy.dealTreeCrash();
+      enemy.dealBulletCrash();
       if(enemy.heal <= 0){
         enemy.death();
         ret = false;
@@ -334,10 +347,30 @@ function setup(){
       }
       return ret;
     });
+
+    bulletList = bulletList.filter(function(bullet){
+      var ret = true;
+      bullet.x = bullet.x + (vFactor * 3 * Math.cos(bullet.rotation - Math.PI / 2));
+      bullet.y = bullet.y + (vFactor * 3 * Math.sin(bullet.rotation - Math.PI / 2));
+      if(contain(bullet, container) != undefined){
+        ret = false;
+        gameContainer.removeChild(bullet);
+      }
+      if(bullet.status == "hit"){
+        ret = false;
+        gameContainer.removeChild(bullet);
+      }
+      return ret;
+    });
   });
 
   document.addEventListener('keydown', onKeyDown);
   document.addEventListener('keyup', onKeyUp);
+  document.onmousemove = function handlemousemove(event){
+    event = event || window.event;
+    cursor.x = event.x;
+    cursor.y = event.y;
+  }
 
   setInterval(spawn,spawnInterval);
   player.intervalFunc();

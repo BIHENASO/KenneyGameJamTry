@@ -5,6 +5,10 @@ var x = window.innerWidth,
     spritePath = "../assets/img/";
 
 //enemy and bonus spawn declarations
+var maxEnemy = 50;
+var spawnInterval = 5000;
+var difficultyRate = 10000;
+var difficultyMod = 1;
 var startingTime = Date.now();
 var enemyTypeList = ["Enemy"]; //["Enemy1", "Enemy2", "Enemy3"];
 var bonusTypeList = ["Tree"]; //["Bonus1", "Bonus2"];
@@ -156,17 +160,19 @@ function spawnBonus(className) {
 	return bonus;
 }
 function spawn(n=5) {
-	var time = Math.floor((Date.now() - startingTime)/10000);
-	var difficulty = time / (time+1);
-	var spawns = [];
-	for (var i = 0; i < n; i++) {
-		spawns.push(Math.random());
-	}
-	for (var i = 0; i < n; i++) {
-		if (spawns[i] < difficulty) {
-			spawns[i] = spawnEnemy(enemyTypeList[Math.floor(Math.random()*enemyTypeList.length)]);
-		} else {
-			spawns[i] = spawnBonus(bonusTypeList[Math.floor(Math.random()*bonusTypeList.length)]);
+	if (enemyList.length < maxEnemy) {
+		var time = Math.floor((Date.now() - startingTime)/difficultyRate);
+		var difficulty = time / (time+difficultyMod);
+		var spawns = [];
+		for (var i = 0; i < n; i++) {
+			spawns.push(Math.random());
+		}
+		for (var i = 0; i < n; i++) {
+			if (spawns[i] < difficulty) {
+				spawns[i] = spawnEnemy(enemyTypeList[Math.floor(Math.random()*enemyTypeList.length)]);
+			} else {
+				spawns[i] = spawnBonus(bonusTypeList[Math.floor(Math.random()*bonusTypeList.length)]);
+			}
 		}
 	}
 }
@@ -301,5 +307,5 @@ function setup(){
   document.addEventListener('keydown', onKeyDown);
   document.addEventListener('keyup', onKeyUp);
 
-  setInterval(spawn,5000);
+  setInterval(spawn,spawnInterval);
 }

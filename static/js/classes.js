@@ -45,8 +45,8 @@ function Player(texture){
   }
   this.fire = function fire(angle){
     var fire = new Sprite(microbasic1sheet["tile1353.png"]);
-    fire.x = this.x + (step * 0.5 * Math.cos(angle));
-    fire.y = this.y + (step * 0.5 * Math.sin(angle));
+    fire.x = this.x; //+ (step * Math.cos(angle));
+    fire.y = this.y; //+ (step * Math.sin(angle));
     fire.width = 1.25 * step;
     fire.height = 1.25 * step;
     fire.anchor.set(0.5);
@@ -155,6 +155,14 @@ function Enemy(texture, type = 1){
     sprite.anchor.set(0.5);
     gameContainer.addChild(sprite);
     return sprite;
+  }
+  this.dealPlayerCrash = function dealPlayerCrash(){
+    if(hitTestRectangle(this, player)){
+      animUtil(1000, 5, function(){player.alpha -= 0.2}.bind(this), function(){player.death();}.bind(this));
+      animUtil(1000, 5, function(){this.alpha -= 0.2}.bind(this), function(){this.death();}.bind(this));
+      return false;
+    }
+    return true;
   }
 
 }

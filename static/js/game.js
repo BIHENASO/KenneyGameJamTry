@@ -332,6 +332,7 @@ function setup(){
       enemy.dealTeamCrash();
       enemy.dealTreeCrash();
       enemy.dealBulletCrash();
+      ret = enemy.dealPlayerCrash();
       if(enemy.heal <= 0){
         enemy.death();
         ret = false;

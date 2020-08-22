@@ -207,10 +207,11 @@ function setup(){
   app.stage.addChild(gameContainer);
 
   bg = new Sprite(resources[spritePath + "bg.png"].texture);
-  bg.x = 0;
-  bg.y = 0;
-  bg.width = x;
-  bg.height = y;
+  bg.anchor.set(0.5);
+  bg.x = x/2;
+  bg.y = y/2;
+  bg.width = 7680;
+  bg.height = 4320;
   gameContainer.addChild(bg);
 
   player = new Player(microcharactersheet["tile378.png"]);

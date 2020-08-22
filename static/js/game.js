@@ -195,7 +195,7 @@ function setup(){
   player.height = step;
   app.stage.addChild(player);
 
-  var enemy = new Enemy(microcharactersheet["tile055.png"]);
+  /*var enemy = new Enemy(microcharactersheet["tile055.png"]);
   enemy.x = x * 0.5;
   enemy.y = y * 0.2;
   enemy.width = step;
@@ -230,7 +230,7 @@ function setup(){
     tree.height = step;
     treeList.push(tree);
     app.stage.addChild(tree);
-  }
+  }*/
 
   app.ticker.add(function(){
     player.move();
@@ -259,6 +259,6 @@ function setup(){
 
   document.addEventListener('keydown', onKeyDown);
   document.addEventListener('keyup', onKeyUp);
-  
+
   setInterval(spawn,5000);
 }

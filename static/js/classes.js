@@ -13,7 +13,6 @@ function Player(texture){
       var angle = this.directionList[this.moveDirection];
       this.x = this.x + (this.moveFactor * this.moveVelocity * this.moveStatus * Math.cos(angle - Math.PI/2))
       this.y = this.y + (this.moveFactor * this.moveVelocity * this.moveStatus * Math.sin(angle - Math.PI/2));
-      this.rotation = angle;
     }
   }
   this.dealTreeCrash = function dealTreeCrash(){
@@ -41,25 +40,25 @@ function Enemy(texture, type = 1){
   this.anchor.set(0.5);
   this.heal = 100;
   this.type = type;
-  this.rotation = (this.type-1) * Math.PI * 0.5;
+  this.moveAngle = (this.type-1) * Math.PI * 0.5;
   this.moveVelocity = step * 0.02;
   this.moveFactor = 1;
   this.range = 200;
   this.move = function move(){
     if(contain(this, container) || this.range <= 0){
-      this.rotation += Math.PI;
+      this.moveAngle += Math.PI;
       this.range = 200;
     }
-    this.x = this.x + (this.moveFactor * this.moveVelocity * Math.cos(this.rotation - Math.PI/2))
-    this.y = this.y + (this.moveFactor * this.moveVelocity * Math.sin(this.rotation - Math.PI/2));
+    this.x = this.x + (this.moveFactor * this.moveVelocity * Math.cos(this.moveAngle - Math.PI/2))
+    this.y = this.y + (this.moveFactor * this.moveVelocity * Math.sin(this.moveAngle - Math.PI/2));
     this.range -= this.moveFactor * this.moveVelocity;
   }
   this.dealTeamCrash = function dealTeamCrash(){
     enemyList.forEach(function(enemy){
       if(hitTestRectangle(this, enemy) && this.id != enemy.id){
-        this.rotation += Math.PI;
+        this.moveAngle += Math.PI;
         this.range = 200;
-        enemy.rotation += Math.PI;
+        enemy.moveAngle += Math.PI;
         enemy.range = 200;
       }
     }.bind(this));
@@ -69,7 +68,7 @@ function Enemy(texture, type = 1){
       if(hitTestRectangle(this, tree)){
         console.log("hit tree");
         tree.heal -= this.heal * 0.1;
-        this.rotation += Math.PI;
+        this.moveAngle += Math.PI;
         this.range = 200;
       }
     }.bind(this));

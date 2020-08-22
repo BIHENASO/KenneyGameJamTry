@@ -20,6 +20,21 @@ var EnemySheets = ["microcharactersheet","microcharactersheet"];
 var EnemyTextures = ["tile055.png","tile109.png"];
 var EnemyNextId = 0;
 
+// camera parameters
+var cameraBounds = {
+	x : -3840,
+	y : -2160,
+	width : 7680,
+	height : 4320
+};
+
+var containerBounds = {
+	x : 0,
+	y : 0,
+	width : 0,
+	height : 0
+}
+
 //global spritesheet declarations
 var microcoloredsheet,
     microbasic0sheet,
@@ -145,14 +160,14 @@ function spawnEnemy(className) {
 	} else {
 		enemy = new window[className](window[window[className+"Sheets"][0]][window[className+"Textures"][0]]);
 	}
-	enemy.x = randomInt(step * 0.5, x - step * 0.5);
-	enemy.y = randomInt(step * 0.5, y - step * 0.5);
+	enemy.x = randomInt(containerBounds.x, containerBounds.width);
+	enemy.y = randomInt(containerBounds.y, containerBounds.height);
 	enemy.width = step;
 	enemy.height = step;
 	enemy.id = window[className+"NextId"]++;
   enemy.radar = enemy.createRadar();
 	enemyList.push(enemy);
-	gameContainer.addChild(enemy);
+	camera.addChild(enemy);
 	return enemy;
 	/*var enemy = new window[className](Math.floor(Math.random()*x),Math.floor(Math.random()*y));
 	enemyList.push(enemy);
@@ -166,12 +181,12 @@ function spawnBonus(className) {
 	} else {
 		bonus = new window[className](window[window[className+"Sheets"][0]][window[className+"Textures"][0]]);
 	}
-	bonus.x = randomInt(step * 0.5, x - step * 0.5);
-	bonus.y = randomInt(step * 0.5, y - step * 0.5);
+	bonus.x = randomInt(containerBounds.x, containerBounds.width);
+	bonus.y = randomInt(containerBounds.y, containerBounds.height);
 	bonus.width = step;
 	bonus.height = step;
 	treeList.push(bonus);
-	gameContainer.addChild(bonus);
+	camera.addChild(bonus);
 	return bonus;
 }
 function spawn(n=5) {
@@ -218,6 +233,9 @@ function setup(){
   gameContainer.width = x;
   gameContainer.height = y;
   app.stage.addChild(gameContainer);
+  
+  camera = new PIXI.Container();
+  gameContainer.addChild(camera);
 
   bg = new Sprite(resources[spritePath + "bg.png"].texture);
   bg.anchor.set(0.5);
@@ -225,14 +243,19 @@ function setup(){
   bg.y = y/2;
   bg.width = 7680;
   bg.height = 4320;
-  gameContainer.addChild(bg);
+  camera.addChild(bg);
+  
+  containerBounds.x = bg.x - (3840-step);
+  containerBounds.y = bg.y - (2160-step);
+  containerBounds.width = bg.x + (3840-step);
+  containerBounds.height = bg.y + (2160-step);
 
   player = new Player(microcharactersheet["tile378.png"]);
   player.x = x * 0.5;
   player.y = y * 0.5;
   player.width = step;
   player.height = step;
-  gameContainer.addChild(player);
+  camera.addChild(player);
 
   sickP = new Sprite(microcharactersheet["tile379.png"]);
   sickP.x = x * 0.5;
@@ -241,7 +264,7 @@ function setup(){
   sickP.height = step;
   sickP.alpha = 0;
   sickP.anchor.set(0.5);
-  gameContainer.addChild(sickP);
+  camera.addChild(sickP);
 
   //create load page container
   var playerHealContainer = new Container();
@@ -283,7 +306,7 @@ function setup(){
   cursor.interactive = true;
   cursor.buttonMode = true;
   cursor.on('pointerdown', function(){console.log("Fire in the hole");if(!player.trigger){player.fireUtil(calculateSlope(player, cursor)+Math.PI*1.5)}});
-  playerHealContainer.addChild(cursor);
+  camera.addChild(cursor);
 
   /*var enemy = new Enemy(microcharactersheet["tile055.png"]);
   enemy.x = x * 0.5;
@@ -353,13 +376,13 @@ function setup(){
       var ret = true;
       bullet.x = bullet.x + (vFactor * 3 * Math.cos(bullet.rotation - Math.PI / 2));
       bullet.y = bullet.y + (vFactor * 3 * Math.sin(bullet.rotation - Math.PI / 2));
-      if(contain(bullet, container) != undefined){
+      if( bullet.x < bg.x - (3840+step) || bullet.y < bg.y - (2160+step) || bullet.x > bg.x + (3840+step) || bullet.y > bg.y + (2160+step)){
         ret = false;
-        gameContainer.removeChild(bullet);
+        camera.removeChild(bullet);
       }
       if(bullet.status == "hit"){
         ret = false;
-        gameContainer.removeChild(bullet);
+        camera.removeChild(bullet);
       }
       return ret;
     });
@@ -369,8 +392,8 @@ function setup(){
   document.addEventListener('keyup', onKeyUp);
   document.onmousemove = function handlemousemove(event){
     event = event || window.event;
-    cursor.x = event.x;
-    cursor.y = event.y;
+    cursor.x = event.x-camera.x;
+    cursor.y = event.y-camera.y;
   }
 
   setInterval(spawn,spawnInterval);

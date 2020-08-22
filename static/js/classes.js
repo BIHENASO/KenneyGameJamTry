@@ -12,12 +12,20 @@ function Player(texture){
   this.intervalID = 0;
   this.trigger = false;
   this.move = function move(){
-    if(!contain(this, container)){
-      var angle = this.directionList[this.moveDirection];
-      this.x = this.x + (this.moveFactor * this.moveVelocity * this.moveStatus * Math.cos(angle - Math.PI/2))
-      this.y = this.y + (this.moveFactor * this.moveVelocity * this.moveStatus * Math.sin(angle - Math.PI/2));
-      sickP.x = this.x;
-      sickP.y = this.y;
+    var angle = this.directionList[this.moveDirection];
+    var x_diff = this.moveFactor * this.moveVelocity * this.moveStatus * Math.cos(angle - Math.PI/2);
+    var y_diff = this.moveFactor * this.moveVelocity * this.moveStatus * Math.sin(angle - Math.PI/2);
+    camera.x = camera.x - x_diff;
+    camera.y = camera.y - y_diff;
+    this.x = this.x + x_diff;
+    this.y = this.y + y_diff;
+    sickP.x = this.x;
+    sickP.y = this.y;
+    if(camera.x <= cameraBounds.x+step/2 || camera.y <= cameraBounds.y+step/2 || camera.x >= cameraBounds.x+cameraBounds.width-step/2 || camera.y >= cameraBounds.y+cameraBounds.height-step/2){
+    	camera.x = camera.x + x_diff;
+		camera.y = camera.y + y_diff;
+		this.x = this.x - x_diff;
+		this.y = this.y - y_diff;
     }
   }
   this.dealTreeCrash = function dealTreeCrash(){
@@ -40,8 +48,8 @@ function Player(texture){
     this.x = -50 * x;
     this.y = -50 * y;
     clearInterval(this.intervalID);
-    gameContainer.removeChild(this);
-    gameContainer.removeChild(sickP);
+    camera.removeChild(this);
+    camera.removeChild(sickP);
   }
   this.fire = function fire(angle){
     var fire = new Sprite(microbasic1sheet["tile1353.png"]);
@@ -53,7 +61,7 @@ function Player(texture){
     fire.damage = this.damage;
     fire.rotation = angle;
     console.log(fire.rotation);
-    gameContainer.addChild(fire);
+    camera.addChild(fire);
     bulletList.push(fire);
   }
   this.fireUtil = function fireUtil(angle){
@@ -93,7 +101,7 @@ function Enemy(texture, type = 1){
   this.damage = dFactor * enemyTypesDict[this.type]["d"];
   this.range = 5 * step;
   this.move = function move(){
-    if(contain(this, container) || this.range <= 0){
+    if( this.x <= containerBounds.x || this.y <= containerBounds.y || this.x >= containerBounds.width || this.y >= containerBounds.height || this.range <= 0){
       this.moveAngle += Math.PI;
       this.range = 5 * step;
     }
@@ -142,8 +150,8 @@ function Enemy(texture, type = 1){
     this.y = -50 * y;
     this.radar.x = this.x;
     this.radar.y = this.y;
-    gameContainer.removeChild(this);
-    gameContainer.removeChild(this.radar);
+    camera.removeChild(this);
+    camera.removeChild(this.radar);
   }
 
   this.createRadar = function createRadar(){
@@ -153,7 +161,7 @@ function Enemy(texture, type = 1){
     sprite.width = 3 * step;
     sprite.height = 3 * step;
     sprite.anchor.set(0.5);
-    gameContainer.addChild(sprite);
+    camera.addChild(sprite);
     return sprite;
   }
   this.dealPlayerCrash = function dealPlayerCrash(){
@@ -183,7 +191,7 @@ function Tree(texture, type = 1){
   this.death = function death(){
     this.x = -50 * x;
     this.y = -50 * y;
-    gameContainer.removeChild(this);
+    camera.removeChild(this);
   }
 }
 

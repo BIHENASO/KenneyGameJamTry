@@ -77,8 +77,14 @@ function Enemy(texture, type = 1){
       this.moveAngle += Math.PI;
       this.range = 5 * step;
     }
+    if(hitTestCircle(this.radar, player)){
+      this.moveAngle = calculateSlope(this.radar, player) - Math.PI/2;
+      this.range = 5 * step;
+    }
     this.x = this.x + (this.moveFactor * this.moveVelocity * Math.cos(this.moveAngle - Math.PI/2))
     this.y = this.y + (this.moveFactor * this.moveVelocity * Math.sin(this.moveAngle - Math.PI/2));
+    this.radar.x = this.x;
+    this.radar.y = this.y;
     this.range -= this.moveFactor * this.moveVelocity;
   }
   this.dealTeamCrash = function dealTeamCrash(){
@@ -104,7 +110,21 @@ function Enemy(texture, type = 1){
   this.death = function death(){
     this.x = -50 * x;
     this.y = -50 * y;
+    this.radar.x = this.x;
+    this.radar.y = this.y;
     gameContainer.removeChild(this);
+    gameContainer.removeChild(this.radar);
+  }
+
+  this.createRadar = function createRadar(){
+    var sprite = new Sprite(radarTexture);
+    sprite.x = this.x;
+    sprite.y = this.y;
+    sprite.width = 3 * step;
+    sprite.height = 3 * step;
+    sprite.anchor.set(0.5);
+    gameContainer.addChild(sprite);
+    return sprite;
   }
 
 }

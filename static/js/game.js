@@ -34,6 +34,7 @@ var microcoloredsheet,
     sickP,
     timer,
     bg,
+    radarTexture,
     enemyList = [],
     treeList = [],
     container = {"x" : 0, "y" : 0, "width" : x, "height" : y},
@@ -106,7 +107,8 @@ loader
       spritePath + "microcoloredsheet.json",
       spritePath + "microindoorsheet.json",
       spritePath + "micromonochromesheet.json",
-      spritePath + "bg.png"
+      spritePath + "bg.png",
+      spritePath + "shield1.png",
     ])
     .on("progress", loadProgressHandler)
     .load(loadPageHandler);
@@ -139,6 +141,7 @@ function spawnEnemy(className) {
 	enemy.width = step;
 	enemy.height = step;
 	enemy.id = window[className+"NextId"]++;
+  enemy.radar = enemy.createRadar();
 	enemyList.push(enemy);
 	gameContainer.addChild(enemy);
 	return enemy;
@@ -198,6 +201,7 @@ function setup(){
   microcitysheet = resources[spritePath + "microcitysheet.json"].textures;
   microindoorsheet = resources[spritePath + "microindoorsheet.json"].textures;
   micromonochromesheet = resources[spritePath + "micromonochromesheet.json"].textures;
+  radarTexture = resources[spritePath + "shield1.png"].texture;
 
   gameContainer = new Container();
   gameContainer.x = 0;
@@ -209,8 +213,8 @@ function setup(){
   bg = new Sprite(resources[spritePath + "bg.png"].texture);
   bg.x = 0;
   bg.y = 0;
-  bg.width = x;
-  bg.height = y;
+  bg.width = 3840;
+  bg.height = 2160;
   gameContainer.addChild(bg);
 
   player = new Player(microcharactersheet["tile378.png"]);

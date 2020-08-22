@@ -111,3 +111,30 @@ function hitTestRectangle(r1, r2) {
 
   	return hit;
 }
+
+function hitTestCircle(c0,c1) {
+	var combinedHalfWidths = c0.width/2 + c1.width/2;
+
+	if (calculateDistance(c0,c1) <= combinedHalfWidths) {
+		return true;
+	}
+	return false;
+}
+
+function calculateDistance(obj0, obj1){
+
+	var distance, dx, dy, spod;
+
+	dx = obj0.x - obj1.x;
+	dy = obj0.y - obj1.y;
+
+	spod = Math.pow(dx,2) + Math.pow(dy,2);
+	distance = Math.pow(spod, 0.5);
+
+	return Math.ceil(distance);
+}
+
+function calculateSlope(obj, obj1){
+
+	return Math.atan2(obj.y - obj1.y, obj.x - obj1.x);
+}

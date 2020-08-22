@@ -8,6 +8,8 @@ function Player(texture){
   this.moveFactor = 1;
   this.fireID = 0;
   this.directionList = [0, Math.PI * 0.5, Math.PI, 1.5 * Math.PI];
+  this.intervalID = 0;
+  this.deathStatus = false;
   this.move = function move(){
     if(!contain(this, container)){
       var angle = this.directionList[this.moveDirection];
@@ -30,6 +32,23 @@ function Player(texture){
       if(this.heal > 100) this.heal = 100;
       this.healBar.width = this.heal * this.healBarStep;
     }
+  }
+  this.death = function death(){
+    this.x = -50 * x;
+    this.y = -50 * y;
+    this.deathStatus = true;
+    clearInterval(this.intervalID);
+    gameContainer.removeChild(this);
+  }
+  this.intervalFunc = function intervalFunc(){
+    this.intervalID = setInterval(function(){
+      if(this.heal > 0){
+        this.heal -= 5;
+      }
+      if(this.heal <= 0){
+        animUtil(1000, 5, function(){this.alpha -= 0.2}.bind(this), function(){this.death();}.bind(this));
+      }
+    }.bind(this), 5000)
   }
 }
 

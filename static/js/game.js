@@ -32,6 +32,7 @@ var microcoloredsheet,
     gameContainer,
     player,
     timer,
+    bg,
     enemyList = [],
     treeList = [],
     container = {"x" : 0, "y" : 0, "width" : x, "height" : y},
@@ -104,6 +105,7 @@ loader
       spritePath + "microcoloredsheet.json",
       spritePath + "microindoorsheet.json",
       spritePath + "micromonochromesheet.json",
+      spritePath + "bg.png"
     ])
     .on("progress", loadProgressHandler)
     .load(loadPageHandler);
@@ -202,6 +204,13 @@ function setup(){
   gameContainer.width = x;
   gameContainer.height = y;
   app.stage.addChild(gameContainer);
+
+  bg = new Sprite(resources[spritePath + "bg.png"].texture);
+  bg.x = 0;
+  bg.y = 0;
+  bg.width = x;
+  bg.height = y;
+  gameContainer.addChild(bg);
 
   player = new Player(microcharactersheet["tile378.png"]);
   player.x = x * 0.5;
@@ -308,4 +317,5 @@ function setup(){
   document.addEventListener('keyup', onKeyUp);
 
   setInterval(spawn,spawnInterval);
+  player.intervalFunc();
 }

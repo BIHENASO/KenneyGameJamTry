@@ -29,6 +29,17 @@ function calculateStep(){
   return step;
 }
 
+function calculateStep1(){
+  var big = x > y ? x : y;
+  var small = x > y ? y : x;
+  var step = small * 0.1;
+  if(step * 20 > big){
+    step -= (20 * step - big) / 20;
+  }
+
+  return step;
+}
+
 function animUtil(duration, maxCount, animfunc, callback = null){
   anim(duration, maxCount, maxCount, animfunc, callback);
 }

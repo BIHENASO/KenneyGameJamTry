@@ -11,6 +11,7 @@ function Player(texture){
   this.directionList = [0, Math.PI * 0.5, Math.PI, 1.5 * Math.PI];
   this.intervalID = 0;
   this.trigger = false;
+  this.kills = 0;
   this.move = function move(){
     var angle = this.directionList[this.moveDirection];
     var x_diff = this.moveFactor * this.moveVelocity * this.moveStatus * Math.cos(angle - Math.PI/2);
@@ -50,6 +51,7 @@ function Player(texture){
     clearInterval(this.intervalID);
     camera.removeChild(this);
     camera.removeChild(sickP);
+    setTimeout(function(){window.location.assign("../html/game.html")}, 1000);
   }
   this.fire = function fire(angle){
     var fire = new Sprite(microbasic1sheet["tile1353.png"]);
@@ -99,15 +101,15 @@ function Enemy(texture, type = 1){
   this.moveAngle = degrees_to_radians(randomInt(0, 360));
   this.moveVelocity = vFactor * enemyTypesDict[this.type]["v"];
   this.damage = dFactor * enemyTypesDict[this.type]["d"];
-  this.range = 5 * step;
+  this.range = 5 * pStep;
   this.move = function move(){
     if( this.x <= containerBounds.x || this.y <= containerBounds.y || this.x >= containerBounds.width || this.y >= containerBounds.height || this.range <= 0){
       this.moveAngle += Math.PI;
-      this.range = 5 * step;
+      this.range = 5 * pStep;
     }
     if(hitTestCircle(this.radar, player)){
       this.moveAngle = calculateSlope(this.radar, player) - Math.PI/2;
-      this.range = 5 * step;
+      this.range = 5 * pStep;
     }
     this.x = this.x + (this.moveVelocity * Math.cos(this.moveAngle - Math.PI/2))
     this.y = this.y + (this.moveVelocity * Math.sin(this.moveAngle - Math.PI/2));
@@ -119,9 +121,9 @@ function Enemy(texture, type = 1){
     enemyList.forEach(function(enemy){
       if(hitTestRectangle(this, enemy) && this.id != enemy.id){
         this.moveAngle += Math.PI;
-        this.range = 5 * step;
+        this.range = 5 * pStep;
         enemy.moveAngle += Math.PI;
-        enemy.range = 5 * step;
+        enemy.range = 5 * pStep;
       }
     }.bind(this));
   }
@@ -131,7 +133,7 @@ function Enemy(texture, type = 1){
         console.log("hit tree");
         tree.heal -= this.damage;
         this.moveAngle += Math.PI;
-        this.range = 5 * step;
+        this.range = 5 * pStep;
       }
     }.bind(this));
   }
@@ -140,10 +142,10 @@ function Enemy(texture, type = 1){
       if(hitTestRectangle(this, bullet)){
         bullet.status = "hit";
         this.heal -= bullet.damage;
-        this.alpha = 0.5;
-        animUtil(500, 5, function(){this.x = this.x + (step / 5 * Math.cos(bullet.rotation - Math.PI/2));
-          this.y = this.y + (step / 5 * Math.sin(bullet.rotation - Math.PI/2));
-          this.alpha += 0.1;}.bind(this),
+        this.alpha = 0.25;
+        animUtil(500, 5, function(){this.x = this.x + (pStep / 5 * Math.cos(bullet.rotation - Math.PI/2));
+          this.y = this.y + (pStep / 5 * Math.sin(bullet.rotation - Math.PI/2));
+          this.alpha += 0.15;}.bind(this),
           function(){this.alpha = 1; this.moveAngle = bullet.rotation - Math.PI;}.bind(this));
       }
     }.bind(this));
@@ -153,6 +155,7 @@ function Enemy(texture, type = 1){
     this.y = -50 * y;
     this.radar.x = this.x;
     this.radar.y = this.y;
+    player.kills += 1;
     camera.removeChild(this);
     camera.removeChild(this.radar);
   }
@@ -161,8 +164,8 @@ function Enemy(texture, type = 1){
     var sprite = new Sprite(radarTexture);
     sprite.x = this.x;
     sprite.y = this.y;
-    sprite.width = 3 * step;
-    sprite.height = 3 * step;
+    sprite.width = 3 * pStep;
+    sprite.height = 3 * pStep;
     sprite.anchor.set(0.5);
 	sprite.alpha = 0;
     camera.addChild(sprite);
@@ -170,6 +173,8 @@ function Enemy(texture, type = 1){
   }
   this.dealPlayerCrash = function dealPlayerCrash(){
     if(hitTestRectangle(this, player)){
+      this.heal = 0;
+      player.heal = 0;
       animUtil(1000, 5, function(){player.alpha -= 0.2}.bind(this), function(){player.death();}.bind(this));
       animUtil(1000, 5, function(){this.alpha -= 0.2}.bind(this), function(){this.death();}.bind(this));
       return false;

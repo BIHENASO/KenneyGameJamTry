@@ -49,6 +49,8 @@ var microcoloredsheet,
     sickP,
     timer,
     bg,
+    killSymbol,
+    killText,
     radarTexture,
     bulletList = [],
     enemyList = [],
@@ -60,7 +62,8 @@ var microcoloredsheet,
         2:{"h":3, "v" : 1, "d" : 3}
       },
     step = calculateStep(),
-    vFactor = step * 0.01,
+    pStep = 4320 / 20;
+    vFactor = 1.5,
     hFactor = 50,
     dFactor = 10;
 
@@ -233,7 +236,7 @@ function setup(){
   gameContainer.width = x;
   gameContainer.height = y;
   app.stage.addChild(gameContainer);
-  
+
   camera = new PIXI.Container();
   gameContainer.addChild(camera);
 
@@ -244,7 +247,7 @@ function setup(){
   bg.width = 7680;
   bg.height = 4320;
   camera.addChild(bg);
-  
+
   containerBounds.x = bg.x - (3840-step);
   containerBounds.y = bg.y - (2160-step);
   containerBounds.width = bg.x + (3840-step);
@@ -288,11 +291,26 @@ function setup(){
   player.healBar = fhg;
   player.healBarStep = fhg.width * 0.01;
 
-  timer = new PixiStopWatch(x - 3 * step, 2 * step, 2 * step, {"animStyle" : "fluid", "colorAnim" : false, "backColor" : 0x9f9f9f, "frontColor" :  0xc7fd09});
+  timer = new PixiStopWatch(x - 3 * step, 2 * step, 2 * step, {"animStyle" : "fluid", "colorAnim" : false, "backColor" : 0xc66527, "frontColor" :  0xc7fd09, "fontColor" : 0xc7fd09});
   timer.drawBack();
   timer.start(600);
   timer.alpha = 0.5;
   playerHealContainer.addChild(timer);
+
+  killSymbol = new Sprite(microcavesheet["tile060.png"]);
+  killSymbol.x = x * 0.5;
+  killSymbol.y = 0.5 * step;
+  killSymbol.width = 2 * step;
+  killSymbol.height = 2 * step;
+  killSymbol.alpha = 0.8;
+  killSymbol.anchor.set(0.5);
+  playerHealContainer.addChild(killSymbol);
+
+  killText = new Text("x0", {"fontSize" : 1.5 * step, "fill" : 0xe7dbc0, "fontFamily": "Courier New"});
+  killText.x = x * 0.5 + step;
+  killText.y = -0.5 * step;
+  killText.alpha = 0.5;
+  playerHealContainer.addChild(killText);
 
   playerHealContainer.x = step * 0.5;
   playerHealContainer.y = step * 0.5;
@@ -386,6 +404,7 @@ function setup(){
       }
       return ret;
     });
+    killText.text = "x" + player.kills;
   });
 
   document.addEventListener('keydown', onKeyDown);
